@@ -12,3 +12,70 @@ services:
     volumes:
       - ~/iris.key:/usr/irissys/mgr/iris.key
       - ./:/irisdev/app
+
+  irisfhir:
+    build: 
+      context: irisfhir
+      dockerfile: Dockerfile
+    restart: always
+    ports: 
+      - 1972
+      - 8083:52773
+      - 53773
+    volumes:
+      - ~/iris.key:/usr/irissys/mgr/iris.key
+      - ./:/irisdev/app
+
+  hapifhirorganization:
+    image: hapiproject/hapi:v5.3.0
+    ports:
+      - "8082:8080"
+    environment:
+      profiles.active: r4
+      spring.datasource.url: 'jdbc:postgresql://postgresdborganization:5432/hapifhir'
+      spring.datasource.username: admin
+      spring.datasource.password: admin
+      spring.datasource.driverClassName: org.postgresql.Driver
+      # - "tester.server_address=http://localhost:8080/fhir"
+    volumes:
+      - ./fhir-data/fhir:/data/hapi
+    depends_on:
+      - postgresdborganization
+
+  postgresdborganization:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: admin
+      POSTGRES_USER: admin
+      POSTGRES_DB: hapifhir
+    # not needed for networking between containers but here for troubleshooting
+    ports:
+      - "5432"
+
+  hapifhirpractitioner:
+    image: hapiproject/hapi:v5.3.0
+    ports:
+      - "8081:8080"
+    environment:
+      profiles.active: r4
+      spring.datasource.url: 'jdbc:postgresql://postgresdbpractitioner:5432/hapifhir'
+      spring.datasource.username: admin
+      spring.datasource.password: admin
+      spring.datasource.driverClassName: org.postgresql.Driver
+      # - "tester.server_address=http://localhost:8080/fhir"
+    volumes:
+      - ./fhir-data/fhir:/data/hapi
+    depends_on:
+      - postgresdbpractitioner
+
+  postgresdbpractitioner:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: admin
+      POSTGRES_USER: admin
+      POSTGRES_DB: hapifhir
+    # not needed for networking between containers but here for troubleshooting
+    ports:
+      - "5432"
