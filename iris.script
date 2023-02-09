@@ -11,7 +11,7 @@
     zpm "install pex-embbeded-python" 
 
     // Install FHIR repo
-    Set appKey = "/api/fhir"
+    Set appKey = "/fhir/r4"
     Set strategyClass = "HS.FHIRServer.Storage.Json.InteractionsStrategy"
     Set metadataConfigKey = "HL7v40"
 
@@ -19,22 +19,16 @@
     Do ##class(HS.FHIRServer.Installer).InstallNamespace()
 
     // Install an instance of a FHIR Service into the current namespace
-    Do ##class(HS.FHIRServer.Installer).InstallInstance(appKey, strategyClass, metadataPackages)
+    Do ##class(HS.FHIRServer.Installer).InstallInstance(appKey, strategyClass, metadataConfigKey)
 
     do ##class(Ens.Director).StopProduction()
     do $system.OBJ.ImportDir("/opt/irisapp/src","*.cls","cdk",.errors,1)
 
-    zw $classmethod("Ens.Director", "SetAutoStart", "HEALTHTOOLKITPKG.FoundationProduction", 0)
+    zw $classmethod("Ens.Director", "SetAutoStart", "FHIRSERVERPKG.FoundationProduction", 0)
 
     // Configure FHIR Service instance to accept unauthenticated requests
     set cspConfig = ##class(HS.Util.RESTCSPConfig).URLIndexOpen(appKey)
-    set cspConfig.ServiceConfigName = "FHIR_Http_Service"
-    set cspConfig.AllowUnauthenticatedAccess = 1
+    set cspConfig.ServiceConfigName = "HS.FHIRServer.Interop.Service"
     zw cspConfig.%Save()
-
-    set strategy = ##class(HS.FHIRServer.API.InteractionsStrategy).GetStrategyForEndpoint(appKey)
-    set config = strategy.GetServiceConfigData()
-    set config.DebugMode = 4
-    do strategy.SaveServiceConfigData(config)
 
     halt
