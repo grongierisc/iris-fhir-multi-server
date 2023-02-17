@@ -1,6 +1,13 @@
     zn "%SYS"
     Do ##class(Security.Users).UnExpireUserPasswords("*")
 
+     // Enable Callin Service for embedded python
+    do ##class(Security.Services).Get("%Service_CallIn",.prop)
+    set prop("Enabled")=1
+    set prop("AutheEnabled")=48
+    do ##class(Security.Services).Modify("%Service_CallIn",.prop)
+
+
     zn "HSLIB"
     set namespace="FHIRSERVER"
 
@@ -10,16 +17,11 @@
 
     zpm "install pex-embbeded-python" 
 
-    // Install FHIR repo
-    Set appKey = "/fhir/r4"
-    Set strategyClass = "HS.FHIRServer.Storage.Json.InteractionsStrategy"
-    Set metadataConfigKey = "HL7v40"
-
     // Install elements that are required for a FHIR-enabled namespace
     Do ##class(HS.FHIRServer.Installer).InstallNamespace()
 
     // Install an instance of a FHIR Service into the current namespace
-    Do ##class(HS.FHIRServer.Installer).InstallInstance(appKey, strategyClass, metadataConfigKey)
+    set status = ##class(HS.FHIRServer.Installer).InteropAdapterConfig(appKey)
 
     do ##class(Ens.Director).StopProduction()
     do $system.OBJ.ImportDir("/opt/irisapp/src","*.cls","cdk",.errors,1)
@@ -30,5 +32,7 @@
     set cspConfig = ##class(HS.Util.RESTCSPConfig).URLIndexOpen(appKey)
     set cspConfig.ServiceConfigName = "HS.FHIRServer.Interop.Service"
     zw cspConfig.%Save()
+
+    do $system.OBJ.Load("/opt/irisapp/misc/export.gof")
 
     halt
