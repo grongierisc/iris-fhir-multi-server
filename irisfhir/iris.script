@@ -4,12 +4,15 @@
     zn "HSLIB"
     set namespace="FHIRSERVER"
     Set appKey = "/fhir/r4"
-    Set strategyClass = "HS.FHIRServer.Storage.Json.InteractionsStrategy"
+    Set strategyClass = "SEMeeting2023.FHIRValidationInteractionsStrategy"
     set metadataPackages = $lb("hl7.fhir.r4.core@4.0.1")
 
     //Install a Foundation namespace and change to it
     Do ##class(HS.HC.Util.Installer).InstallFoundation(namespace)
     zn namespace
+
+    // load classes
+    do $system.OBJ.ImportDir("/opt/irisapp/src","*.cls","cdk",.errors,1)
 
     // Install elements that are required for a FHIR-enabled namespace
     Do ##class(HS.FHIRServer.Installer).InstallNamespace()

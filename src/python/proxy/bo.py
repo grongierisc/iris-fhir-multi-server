@@ -4,6 +4,7 @@ from grongier.pex import BusinessOperation
 from base64 import b64encode
 import json
 import iris
+from msg import FhirRequest
 
 class FhirClient(BusinessOperation):
     """

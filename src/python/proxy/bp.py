@@ -32,10 +32,10 @@ class FhirRouter(BusinessProcess):
                 # If the path contains Organization, then send it to the
                 # Organization server
                 target = "FHIROrganization"
-            elif "Practitioner" in path:
-                # If the path contains Practitioner, then send it to the
-                # Practitioner server hapifhirpractitioner
-                target = "FHIRPractitioner"
+            elif "Claim" in path:
+                # If the path contains claim, then send it to the
+                # claim server hapifhirclaim
+                target = "FHIRClaim"
 
         # Send the request to the FHIR server
         response = self.send_request_sync(target,request)
