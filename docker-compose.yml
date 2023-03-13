@@ -24,7 +24,7 @@ services:
       - 53773
     volumes:
       - ~/iris.key:/usr/irissys/mgr/iris.key
-      - ./:/irisdev/app
+      - ./irisfhir:/irisdev/app/
 
   hapifhirorganization:
     image: hapiproject/hapi:v5.3.0

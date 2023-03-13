@@ -2,6 +2,11 @@
     do ##class(Security.Users).UnExpireUserPasswords("*")
 
     zn "HSLIB"
+
+    // Enable FHIR SQL Builder
+    Do ##class(HS.HC.FHIRSQL.Utils.Setup).CreateWebApps("HSSYS",1)
+	Do ##class(HS.HC.FHIRSQL.Utils.Setup).DefineDocDBs("HSSYS")
+
     set namespace="FHIRSERVER"
     Set appKey = "/fhir/r4"
     Set strategyClass = "SEMeeting2023.FHIRValidationInteractionsStrategy"
@@ -11,8 +16,18 @@
     Do ##class(HS.HC.Util.Installer).InstallFoundation(namespace)
     zn namespace
 
+    // Configure java gateway
+    set mod = {}
+    set mod.Name = "%Java Server"
+    set mod.UseSharedMemory = 1
+    set mod.JavaHome = "/usr/lib/jvm/java-11-openjdk-amd64"
+    set mod.ClassPath = "/irisdev/app/src/java/:/irisdev/app/src/java/lib/validator_cli.jar"
+    do $system.external.modifyServer(mod)
+
+    Do $classMethod("HS.HC.FHIRSQL.Server.FHIRRepository","SetupInteractions")
+
     // load classes
-    do $system.OBJ.ImportDir("/opt/irisapp/src","*.cls","cdk",.errors,1)
+    do $system.OBJ.ImportDir("/irisdev/app/src","*.cls","cdk",.errors,1)
 
     // Install elements that are required for a FHIR-enabled namespace
     Do ##class(HS.FHIRServer.Installer).InstallNamespace()

@@ -5,19 +5,19 @@ Class SEMeeting2023.FHIRValidation [ Abstract ]
 
 Parameter SkipIfNoProfileKEY = 1;
 
-Parameter JavaGatewayPortKEY = 53275;
+Parameter JavaGatewayPortKEY = 53272;
 
-Parameter JavaGatewayServerKEY = "127.0.0.1";
+Parameter JavaGatewayServerKEY = "localhost";
 
-Parameter IGListKEY = "/irisapp/dev/src/fsh-generated/resources/ImplementationGuide-SEMeeting2023.json";
+Parameter IGListKEY = "/irisdev/app/src/fsh-generated/resources/ImplementationGuide-se-meeting-2023.json";
 
 Parameter TerminologyServerKEY;
 
-Parameter PatientProfileKEY = "http://intersystems.com/fhir/SEMeeting2023/StructureDefinition/MyPatient";
+Parameter PatientProfileKEY;
 
 ClassMethod validate(theResource As %DynamicObject)
 {
-	#dim skipIfNoProfile As %String = ##class(HS.Registry.Config).GetKeyValue(..#SkipIfNoProfileKEY)
+	#dim skipIfNoProfile As %String = ..#SkipIfNoProfileKEY
 	
 	#dim noProfile As %Boolean = ('theResource.%IsDefined("meta") || 'theResource.meta.%IsDefined("profile") || (theResource.meta.profile.%Size() = 0))
 	
@@ -27,11 +27,11 @@ ClassMethod validate(theResource As %DynamicObject)
 		quit
 	}
 		
-	#dim javaGatewayPort As %String = ##class(HS.Registry.Config).GetKeyValue(..#JavaGatewayPortKEY)
-	#dim javaGatewayServer As %String = ##class(HS.Registry.Config).GetKeyValue(..#JavaGatewayServerKEY)
-	#dim igList As %String = ##class(HS.Registry.Config).GetKeyValue(..#IGListKEY)
-	#dim terminologyServer As %String = ##class(HS.Registry.Config).GetKeyValue(..#TerminologyServerKEY)
-	#dim patientProfile As %String = ##class(HS.Registry.Config).GetKeyValue(..#PatientProfileKEY)
+	#dim javaGatewayPort As %String = ..#JavaGatewayPortKEY
+	#dim javaGatewayServer As %String = ..#JavaGatewayServerKEY
+	#dim igList As %String = ..#IGListKEY
+	#dim terminologyServer As %String = ..#TerminologyServerKEY
+	#dim patientProfile As %String = ..#PatientProfileKEY
 	
 	#dim profileToValidateAgainst As %String = ""
 	if noProfile 
