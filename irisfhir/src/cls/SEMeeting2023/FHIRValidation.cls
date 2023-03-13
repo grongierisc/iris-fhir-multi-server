@@ -41,24 +41,7 @@ ClassMethod validate(theResource As %DynamicObject)
 		set profileToValidateAgainst = patientProfile
 	}	
 	
-	// check if Java Gateway is up
-	#dim sc As %Status = ##class(%Net.Remote.Service).PingGateway(javaGatewayPort, javaGatewayServer)
-	if $$$ISERR(sc)
-	{
-		// assuming this is local gateway, try to start it
-		$$$ThrowOnError(##class(%Net.Remote.Service).StartGateway("%Java Server"))
-		set sc = $$$OK
-	}
-
-	// connect to gateway
-	#dim gw As %Net.Remote.Gateway = ##class(%Net.Remote.Gateway).%New()
-	$$$ThrowOnError(gw.%Connect(javaGatewayServer, javaGatewayPort))
-	
-	// generate proxy class if it's not present
-	if '$$$comClassDefined("SEMeeting2023.JavaValidatorFacade")
-	{
-		do ##class(%Net.Remote.Java.JavaGateway).%ExpressImport("SEMeeting2023.JavaValidatorFacade", javaGatewayPort, javaGatewayServer, $$$YES)
-	}
+	set gw = $system.external.getJavaGateway()
 
 	// create temporary file with the resource
 	#dim file As %Stream.FileCharacter = ##class(%Stream.FileCharacter).%New()
@@ -70,8 +53,12 @@ ClassMethod validate(theResource As %DynamicObject)
 	#dim json As %String = ""
 	try
 	{
+		Do ##class(%Library.Device).ReDirectIO(0)
 		$$$FSLog("About to call Java validator...")
-		set json = ##class(SEMeeting2023.JavaValidatorFacade).validate(gw, igList, file.Filename, terminologyServer, profileToValidateAgainst)
+		set validator = gw.new("SEMeeting2023.JavaValidatorFacade")
+
+		set json = validator.validate( igList, file.Filename, terminologyServer, profileToValidateAgainst)
+		Do ##class(%Library.Device).ReDirectIO(1)
 	}
 	catch ex
 	{
@@ -80,7 +67,7 @@ ClassMethod validate(theResource As %DynamicObject)
 	}
 	kill file  // the file gets deleted here as we've never %Save()d it!
 
-	$$$ThrowOnError(sc)
+	
 
 
 	// assemble error status in case of any severity=error issues
