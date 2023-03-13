@@ -9,9 +9,9 @@ Parameter JavaGatewayPortKEY = 53272;
 
 Parameter JavaGatewayServerKEY = "localhost";
 
-Parameter IGListKEY = "/irisdev/app/src/fsh-generated/resources/ImplementationGuide-se-meeting-2023.json";
+Parameter IGListKEY = "/irisdev/app/src/fsh/CHUToulouseIG/fsh-generated/resources/";
 
-Parameter TerminologyServerKEY;
+Parameter TerminologyServerKEY = "https://tx.fhir.org/r4/";
 
 Parameter PatientProfileKEY;
 

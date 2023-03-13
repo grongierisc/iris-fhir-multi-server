@@ -2,13 +2,13 @@
     "resourceType": "Patient",
     "meta": {
       "profile": [
-        "http://intersystems.com/fhir/SEMeeting2023/StructureDefinition/MyPatient"
+        "http://intersystems.com/fhir/chu/toulouse/StructureDefinition/MyPatient"
       ]
     },
     "extension": [
       {
-        "url": "http://intersystems.com/fhir/SEMeeting2023/StructureDefinition/birthsex-extension",
-        "valueCode": "F"
+        "url": "http://intersystems.com/fhir/chu/toulouse/StructureDefinition/birthsex-extension",
+        "valueCode": "T"
       }
     ],
     "name": [
