@@ -43,5 +43,5 @@
     set config.MaxSearchResults = 100000
     do strategy.SaveServiceConfigData(config)
 
-    do ##class(HS.FHIRServer.Tools.DataLoader).SubmitResourceFiles("/home/irisowner/fhirdata/data/hapi", "FHIRServer", "/fhir/r4")
+    do ##class(HS.FHIRServer.Tools.DataLoader).SubmitResourceFiles("/irisdev/app/data/fhir", "FHIRSERVER", "/fhir/r4")
     halt

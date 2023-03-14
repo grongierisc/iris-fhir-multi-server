@@ -10,11 +10,12 @@
       "username": "SuperUser",
       "password": "SYS",
       "docker-compose": {
-        "service": "irisfhir",
+        "service": "iris",
         "internalPort": 52773
       },
       "links": {
-        "FHIR server test": "http://localhost:${port}/fhir/r4/metadata"
+        "FHIR server test": "http://localhost:${port}/fhir/r4/metadata",
+        "FHIR SQL Builder": "http://localhost:8083/csp/fhirsql/index.csp"
       }
     },
     "sqltools.connections": [

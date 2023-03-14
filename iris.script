@@ -20,6 +20,8 @@
     // Install elements that are required for a FHIR-enabled namespace
     Do ##class(HS.FHIRServer.Installer).InstallNamespace()
 
+    set appKey = "/fhir/r4"
+
     // Install an instance of a FHIR Service into the current namespace
     set status = ##class(HS.FHIRServer.Installer).InteropAdapterConfig(appKey)
 
@@ -28,11 +30,7 @@
 
     zw $classmethod("Ens.Director", "SetAutoStart", "FHIRSERVERPKG.FoundationProduction", 0)
 
-    // Configure FHIR Service instance to accept unauthenticated requests
-    set cspConfig = ##class(HS.Util.RESTCSPConfig).URLIndexOpen(appKey)
-    set cspConfig.ServiceConfigName = "HS.FHIRServer.Interop.Service"
-    zw cspConfig.%Save()
-
+    // load registry
     do $system.OBJ.Load("/opt/irisapp/misc/export.gof")
 
     halt
