@@ -6,4 +6,3 @@ Parameter StrategyKey = "SEMeeting2023.FHIRValidationInteractionsStrategy";
 Parameter InteractionsClass = "SEMeeting2023.FHIRValidationInteractions";
 
 }
-

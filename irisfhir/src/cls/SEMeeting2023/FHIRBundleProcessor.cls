@@ -4,4 +4,3 @@ Class SEMeeting2023.FHIRBundleProcessor Extends HS.FHIRServer.Storage.Json.Bundl
 Parameter BundleValidatorClass = "SEMeeting2023.FHIRBundleValidator";
 
 }
-

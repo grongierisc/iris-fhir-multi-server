@@ -24,4 +24,3 @@ Method ValidateResource(pResourceObject As %DynamicObject)
 }
 
 }
-

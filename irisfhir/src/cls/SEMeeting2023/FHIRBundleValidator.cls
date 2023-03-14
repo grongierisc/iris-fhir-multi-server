@@ -9,4 +9,3 @@ ClassMethod ValidateBundle(pResourceObject As %DynamicObject, pFHIRVersion As %S
 }
 
 }
-
