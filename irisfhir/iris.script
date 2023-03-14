@@ -20,6 +20,7 @@
     set mod = {}
     set mod.Name = "%Java Server"
     set mod.UseSharedMemory = 1
+    set mod.Resource = ""
     set mod.JavaHome = "/usr/lib/jvm/java-11-openjdk-amd64"
     set mod.ClassPath = "/irisdev/app/src/java/:/irisdev/app/src/java/lib/validator_cli.jar"
     do $system.external.modifyServer(mod)
