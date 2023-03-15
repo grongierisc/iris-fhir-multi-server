@@ -8,6 +8,4 @@ groups:
     expr: (idelta(iris_system_alerts_log[5m]) != 0) or (iris_system_alerts_new > 0)
 - name: chu
   rules: []
-- name: chu
-  rules: []
 

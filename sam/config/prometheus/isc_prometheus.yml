@@ -20,4 +20,16 @@ scrape_configs:
   - job_name: 'SAM'
     metrics_path: '/api/monitor/metrics'
     scheme: http
-    static_configs: []
+    http_sd_configs:
+      - url: http://sam:52773/api/sam/private/targets
+        refresh_interval: 5y
+    relabel_configs:
+      - source_labels: [__address__,__metrics_path__]
+        separator: ''
+        regex:  '[^/]+(/.*)'
+        target_label: __metrics_path__
+      - source_labels: [__address__]
+        target_label: instance
+      - source_labels: [__address__]
+        regex:  '([^/]+)/.*'
+        target_label: __address__

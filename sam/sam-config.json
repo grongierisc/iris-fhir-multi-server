@@ -1,0 +1,27 @@
+{
+  "clusters": [
+    {
+      "name": "chu",
+      "description": "",
+      "targets": [
+        {
+          "instance": "iris:52773",
+          "name": "iris",
+          "description": "",
+          "urlPrefix": "",
+          "dashboardId": "2"
+        },
+        {
+          "instance": "irisfhir:52773",
+          "name": "irisfhir",
+          "description": "",
+          "urlPrefix": "",
+          "dashboardId": "2"
+        }
+      ],
+      "alertrules": []
+    }
+  ],
+  "KeepDays": 2,
+  "grafanadb": "UFJBR01BIGZvcmVpZ25fa2V5cz1PRkY7QkVHSU4gVFJBTlNBQ1RJT047Q09NTUlUOw=="
+}

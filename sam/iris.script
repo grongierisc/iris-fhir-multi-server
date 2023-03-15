@@ -1,5 +1,0 @@
- zn "%SYS"
- // Active password   
- Do ##class(Security.Users).UnExpireUserPasswords("*")
-
-halt
