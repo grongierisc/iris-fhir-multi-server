@@ -3,9 +3,9 @@ global:
   evaluation_interval: 15s
 
 remote_read:
-  - url: "http://iris:52773/api/sam/private/db/read"
+  - url: "http://sam:52773/api/sam/private/db/read"
 remote_write:
-  - url: "http://iris:52773/api/sam/private/db/write"
+  - url: "http://sam:52773/api/sam/private/db/write"
 
 alerting:
   alertmanagers:

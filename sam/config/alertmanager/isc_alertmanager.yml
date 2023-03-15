@@ -15,6 +15,6 @@ inhibit_rules:
 receivers:
 - name: 'isc_sam_default'
   webhook_configs:
-  - url: http://iris:52773/api/sam/private/alerts
+  - url: http://sam:52773/api/sam/private/alerts
     send_resolved: false
 ################### DO NOT EDIT ABOVE THIS LINE! ###################

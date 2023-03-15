@@ -15,7 +15,8 @@
       },
       "links": {
         "FHIR server test": "http://localhost:${port}/fhir/r4/metadata",
-        "FHIR SQL Builder": "http://localhost:8083/csp/fhirsql/index.csp"
+        "FHIR SQL Builder": "http://localhost:8083/csp/fhirsql/index.csp",
+        "SAM": "http://localhost:8088/api/sam/app/index.csp"
       }
     },
     "sqltools.connections": [

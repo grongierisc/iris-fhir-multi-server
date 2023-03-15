@@ -1,9 +1,5 @@
 ---
 services:
-  samjob:
-    build: 
-      context: ./config/samjob
-      dockerfile: Dockerfile
   alertmanager:
     command:
       - --config.file=/config/isc_alertmanager.yml
@@ -14,45 +10,42 @@ services:
       - prometheus
     expose:
       - '9093'
-    image: prom/alertmanager:v0.20.0
+    build:
+      context: ./config/alertmanager
+      dockerfile: Dockerfile
     restart: on-failure
-    volumes:
-      - ./config/alertmanager:/config
   grafana:
     depends_on:
       - prometheus
     expose:
       - '3000'
-    image: grafana/grafana:6.7.1
+    build: 
+      context: ./config/grafana
+      dockerfile: Dockerfile
     restart: on-failure
-    volumes:
-      - grafdata:/var/lib/grafana
-      - ./config/grafana/grafana.ini:/etc/grafana/grafana.ini
-      - ./config/grafana/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml
-      - ./config/grafana/dashboard-provider.yml:/etc/grafana/provisioning/dashboards/dashboard-provider.yml
-      - ./config/grafana/dashboard.json:/var/lib/grafana/dashboards/dashboard.json
   sam:
+    command: 
+      - '--check-caps false'
+      - -a 
+      - iris session iris -U%SYS '##class(Security.Users).UnExpireUserPasswords("*")'
     expose:
       - '51773'
       - '52773'
-    hostname: IRIS
-    build: 
-      context: .
-      dockerfile: Dockerfile
+    image: containers.intersystems.com/intersystems/sam:2.0.1.181
     init: true
     restart: on-failure
     volumes:
       - ./config:/config
-    ports:
-      - 52777:52773
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
   nginx:
     depends_on:
       - sam
       - prometheus
       - grafana
-    image: nginx:1.17.9-alpine
+    image: nginx:1.23.1-alpine
     ports:
-      - 8080:8080
+      - 8088:8080
     restart: on-failure
     volumes:
       - ./config/nginx/nginx.conf:/etc/nginx/nginx.conf
@@ -65,15 +58,13 @@ services:
       - sam
     expose:
       - '9090'
-    image: prom/prometheus:v2.17.1
+    build:
+      context: ./config/prometheus
+      dockerfile: Dockerfile
     restart: on-failure
-    volumes:
-      - ./config/prometheus:/config
 version: '3.7'
-volumes:
-  grafdata: ~
-  samdata: ~
-networks: 
-  default: 
-    external: 
-      name: etab-connector 
+
+networks:
+  default:
+    external:
+      name: iris-fhir-multi-server_default

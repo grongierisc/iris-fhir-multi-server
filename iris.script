@@ -33,4 +33,7 @@
     // load registry
     do $system.OBJ.Load("/opt/irisapp/misc/export.gof")
 
+    zw ##class(Ens.Util.Statistics).EnableSAMForNamespace()
+    zw ##class(Ens.Util.Statistics).EnableSAMIncludeHostLabel()
+
     halt
