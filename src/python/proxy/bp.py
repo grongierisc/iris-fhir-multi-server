@@ -69,7 +69,7 @@ class FhirRouter(BusinessProcess):
                     # print the value
                     print(entry.resource.identifier[0].value)
                     # update the ifNoneExist request of the entry wih the value
-                    entry.request.ifNoneExist = 'identifier={entry.resource.identifier[0].value}'
+                    entry.request.ifNoneExist = f'identifier={entry.resource.identifier[0].value}'
 
         # clear the payload
         msg.Payload.Clear()

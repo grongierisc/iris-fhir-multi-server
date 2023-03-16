@@ -1,121 +1,354 @@
-# iris-fhirserver-template
-This is the base template for using InterSystems IRIS for Health Community Edition as a FHIR Server
+# iris-fhir-multi-server
 
-It setups a FHIR SERVER, imports the test data, demoes REST API usage with a simple web page.
+## List of servers
 
-## Prerequisites
-Make sure you have [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) and [Docker desktop](https://www.docker.com/products/docker-desktop) installed.
+* EAI :
+  * http://localhost:32283/csp/healthshare/fhirserver/EnsPortal.ProductionConfig.zen?$NAMESPACE=FHIRSERVER&$NAMESPACE=FHIRSERVER&
+* FHIR :
+  * Proxy : http://localhost:32283/fhir/r4/
+  * Iris Fhir : http://localhost:8083/fhir/r4/
+  * HAPI Organisations : http://localhost:8082/fhir/
+  * HAPI Claims : http://localhost:8081/fhir/
 
-## Installation 
+## Example of request
 
-Clone/git pull the repo into any local directory
+### Get a patient from EAI
 
-```
-$ git clone https://github.com/intersystems-community/iris-fhir-template.git
-```
-
-Open the terminal in this directory and run:
-
-```
-$ docker-compose up -d
+```http
+GET http://localhost:32283/fhir/r4/Patient?name=elbert
 ```
 
-## Patient data
-The template goes with 5 preloaded patents in [/data/fhir](https://github.com/intersystems-community/iris-fhir-server-template/tree/master/data/fhir) folder which are being loaded during [docker build](https://github.com/intersystems-community/iris-fhir-server-template/blob/8bd2932b34468f14530a53d3ab5125f9077696bb/iris.script#L26)
-You can generate more patients doing the following. Open shel terminal in repository folder and call:
-```
-#./synthea-loader.sh 10
-```
-this will create 10 more patients in data/fhir folder.
-Then open IRIS terminal in FHIRSERVER namespace with the following command:
-```
-docker-compose exec iris iris session iris -U FHIRServer
-```
-and call the loader method:
-```
-FHIRSERVER>d ##class(fhirtemplate.Setup).LoadPatientData("/irisdev/app/output/fhir","FHIRSERVER","/fhir/r4")
-```
+### Post an Organisation from EAI
 
- with using the [following project](https://github.com/intersystems-community/irisdemo-base-synthea)
+```http
+POST http://localhost:32283/fhir/r4/Organization
+Content-Type: application/json
 
-## Testing FHIR R4 API
-
-Open URL http://localhost:32783/fhir/r4/metadata
-you should see the output of fhir resources on this server
-
-## Testing Postman calls
-Get fhir resources metadata
-GET call for http://localhost:32783/fhir/r4/metadata
-<img width="881" alt="Screenshot 2020-08-07 at 17 42 04" src="https://user-images.githubusercontent.com/2781759/89657453-c7cdac00-d8d5-11ea-8fed-71fa8447cc45.png">
-
-
-Open Postman and make a GET call for the preloaded Patient:
-http://localhost:32783/fhir/r4/Patient/1
-<img width="884" alt="Screenshot 2020-08-07 at 17 42 26" src="https://user-images.githubusercontent.com/2781759/89657252-71606d80-d8d5-11ea-957f-041dbceffdc8.png">
-
-
-## Testing FHIR API calls in simple frontend APP
-
-the very basic frontend app with search and get calls to Patient and Observation FHIR resources could be found here:
-http://localhost:32783/csp/user/fhirUI/FHIRAppDemo.html
-or from VSCode ObjectScript menu:
-<img width="616" alt="Screenshot 2020-08-07 at 17 34 49" src="https://user-images.githubusercontent.com/2781759/89657546-ea5fc500-d8d5-11ea-97ed-6fbbf84da655.png">
-
-While open the page you will see search result for female anemic patients and graphs a selected patient's hemoglobin values:
-<img width="484" alt="Screenshot 2020-08-06 at 18 51 22" src="https://user-images.githubusercontent.com/2781759/89657718-2b57d980-d8d6-11ea-800f-d09dfb48f8bc.png">
-
-
-## Development Resources
-[InterSystems IRIS FHIR Documentation](https://docs.intersystems.com/irisforhealth20203/csp/docbook/Doc.View.cls?KEY=HXFHIR)
-[FHIR API](http://hl7.org/fhir/resourcelist.html)
-[Developer Community FHIR section](https://community.intersystems.com/tags/fhir)
-
-
-
-## How to start development
-This repository is ready to code in VSCode with ObjectScript plugin.
-Install [VSCode](https://code.visualstudio.com/), [Docker](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-docker) and [ObjectScript](https://marketplace.visualstudio.com/items?itemName=daimor.vscode-objectscript) plugin and open the folder in VSCode.
-Open /src/cls/PackageSample/ObjectScript.cls class and try to make changes - it will be compiled in running IRIS docker container.
-![docker_compose](https://user-images.githubusercontent.com/2781759/76656929-0f2e5700-6547-11ea-9cc9-486a5641c51d.gif)
-
-Feel free to delete PackageSample folder and place your ObjectScript classes in a form
-/src/Package/Classname.cls
-[Read more about folder setup for InterSystems ObjectScript](https://community.intersystems.com/post/simplified-objectscript-source-folder-structure-package-manager)
-
-The script in Installer.cls will import everything you place under /src into IRIS.
-
-
-## What's inside the repository
-
-### Dockerfile
-
-The simplest dockerfile which starts IRIS and imports Installer.cls and then runs the Installer.setup method, which creates IRISAPP Namespace and imports ObjectScript code from /src folder into it.
-Use the related docker-compose.yml to easily setup additional parametes like port number and where you map keys and host folders.
-Use .env/ file to adjust the dockerfile being used in docker-compose.
-
-
-### .vscode/settings.json
-
-Settings file to let you immedietly code in VSCode with [VSCode ObjectScript plugin](https://marketplace.visualstudio.com/items?itemName=daimor.vscode-objectscript))
-
-### .vscode/launch.json
-Config file if you want to debug with VSCode ObjectScript
-
-
-## Troubleshooting
-**ERROR #5001: Error -28 Creating Directory /usr/irissys/mgr/FHIRSERVER/**
-If you see this error it probably means that you ran out of space in docker.
-you can clean up it with the following command:
-```
-docker system prune -f
-```
-And then start rebuilding image without using cache:
-```
-docker-compose build --no-cache
-```
-and start the container with:
-```
-docker-compose up -d
+{
+  "resourceType": "Organization",
+  "identifier": [
+    {
+      "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+      "value": "12345"
+    }
+  ],
+  "active": true,
+  "type": [
+    {
+      "coding": [
+        {
+          "system": "http://terminology.hl7.org/CodeSystem/organization-type",
+          "code": "prov",
+          "display": "Healthcare Provider"
+        }
+      ],
+      "text": "Healthcare Provider"
+    }
+  ],
+  "name": "Acme Healthcare",
+  "telecom": [
+    {
+      "system": "phone",
+      "value": "(555) 234-4321"
+    }
+  ],
+  "address": [
+    {
+      "use": "work",
+      "line": [
+        "3300 Washtenaw Avenue"
+      ],
+      "city": "Ann Arbor",
+      "state": "MI",
+      "postalCode": "48104",
+      "country": "USA"
+    }
+  ]
+}
 ```
 
-This and other helpful commands you can find in [dev.md](https://github.com/intersystems-community/iris-fhir-template/blob/cd7e0111ff94dcac82377a2aa7df0ce5e0571b5a/dev.md)
+### Post a Claim from EAI
+
+```http
+POST http://localhost:32283/fhir/r4/Claim
+
+{
+  "resourceType": "Claim",
+  "id": "100150",
+  "text": {
+    "status": "generated",
+    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">A human-readable rendering of the Oral Health Claim</div>"
+  },
+  "identifier": [
+    {
+      "system": "http://happyvalley.com/claim",
+      "value": "12345"
+    }
+  ],
+  "status": "active",
+  "type": {
+    "coding": [
+      {
+        "system": "http://terminology.hl7.org/CodeSystem/claim-type",
+        "code": "oral"
+      }
+    ]
+  },
+  "use": "claim",
+  "patient": {
+    "reference": "http://irisfhir:52773/fhir/r4/Patient/2027"
+  },
+  "created": "2014-08-16",
+  "insurer": {
+    "reference": "http://hapifhirorganization:8080/fhir/Organization/1"
+  },
+  "provider": {
+    "reference": "http://hapifhirorganization:8080/fhir/Organization/1"
+  },
+  "priority": {
+    "coding": [
+      {
+        "code": "normal"
+      }
+    ]
+  },
+  "payee": {
+    "type": {
+      "coding": [
+        {
+          "code": "provider"
+        }
+      ]
+    }
+  },
+  "careTeam": [
+    {
+      "sequence": 1,
+      "provider": {
+        "reference": "http://irisfhir:52773/fhir/r4/Practitioner/3"
+      }
+    }
+  ],
+  "diagnosis": [
+    {
+      "sequence": 1,
+      "diagnosisCodeableConcept": {
+        "coding": [
+          {
+            "code": "123456"
+          }
+        ]
+      }
+    }
+  ],
+  "insurance": [
+    {
+      "sequence": 1,
+      "focal": true,
+      "identifier": {
+        "system": "http://happyvalley.com/claim",
+        "value": "12345"
+      },
+      "coverage": {
+        "reference": "Coverage/9876B1"
+      }
+    }
+  ],
+  "item": [
+    {
+      "sequence": 1,
+      "careTeamSequence": [
+        1
+      ],
+      "productOrService": {
+        "coding": [
+          {
+            "code": "1200"
+          }
+        ]
+      },
+      "servicedDate": "2014-08-16",
+      "unitPrice": {
+        "value": 135.57,
+        "currency": "USD"
+      },
+      "net": {
+        "value": 135.57,
+        "currency": "USD"
+      }
+    }
+  ]
+}
+```
+
+### Post a simple Patient from EAI
+
+```http
+POST http://localhost:32283/fhir/r4/Patient
+
+{
+  "resourceType": "Patient",
+  "id": "example",
+  "text": {
+    "status": "generated",
+    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">\n\t\t\t<table>\n\t\t\t\t<tbody>\n\t\t\t\t\t<tr>\n\t\t\t\t\t\t<td>Name</td>\n\t\t\t\t\t\t<td>Peter James \n              <b>Chalmers</b> (&quot;Jim&quot;)\n            </td>\n\t\t\t\t\t</tr>\n\t\t\t\t\t<tr>\n\t\t\t\t\t\t<td>Address</td>\n\t\t\t\t\t\t<td>534 Erewhon, Pleasantville, Vic, 3999</td>\n\t\t\t\t\t</tr>\n\t\t\t\t\t<tr>\n\t\t\t\t\t\t<td>Contacts</td>\n\t\t\t\t\t\t<td>Home: unknown. Work: (03) 5555 6473</td>\n\t\t\t\t\t</tr>\n\t\t\t\t\t<tr>\n\t\t\t\t\t\t<td>Id</td>\n\t\t\t\t\t\t<td>MRN: 12345 (Acme Healthcare)</td>\n\t\t\t\t\t</tr>\n\t\t\t\t</tbody>\n\t\t\t</table>\n\t\t</div>"
+  },
+  "identifier": [
+    {
+      "use": "usual",
+      "type": {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+            "code": "MR"
+          }
+        ]
+      },
+      "system": "urn:oid:1.2.36.146.595.217.0.1",
+      "value": "12345",
+      "period": {
+        "start": "2001-05-06"
+      },
+      "assigner": {
+        "display": "Acme Healthcare"
+      }
+    }
+  ],
+  "active": true,
+  "name": [
+    {
+      "use": "official",
+      "family": "Chalmers",
+      "given": [
+        "Peter",
+        "James"
+      ]
+    },
+    {
+      "use": "usual",
+      "given": [
+        "Jim"
+      ]
+    },
+    {
+      "use": "maiden",
+      "family": "Windsor",
+      "given": [
+        "Peter",
+        "James"
+      ],
+      "period": {
+        "end": "2002"
+      }
+    }
+  ],
+  "telecom": [
+    {
+      "use": "home"
+    },
+    {
+      "system": "phone",
+      "value": "(03) 5555 6473",
+      "use": "work",
+      "rank": 1
+    },
+    {
+      "system": "phone",
+      "value": "(03) 3410 5613",
+      "use": "mobile",
+      "rank": 2
+    },
+    {
+      "system": "phone",
+      "value": "(03) 5555 8834",
+      "use": "old",
+      "period": {
+        "end": "2014"
+      }
+    }
+  ],
+  "gender": "male",
+  "birthDate": "1974-12-25",
+  "_birthDate": {
+    "extension": [
+      {
+        "url": "http://hl7.org/fhir/StructureDefinition/patient-birthTime",
+        "valueDateTime": "1974-12-25T14:35:45-05:00"
+      }
+    ]
+  },
+  "deceasedBoolean": false,
+  "address": [
+    {
+      "use": "home",
+      "type": "both",
+      "text": "534 Erewhon St PeasantVille, Rainbow, Vic  3999",
+      "line": [
+        "534 Erewhon St"
+      ],
+      "city": "PleasantVille",
+      "district": "Rainbow",
+      "state": "Vic",
+      "postalCode": "3999",
+      "period": {
+        "start": "1974-12-25"
+      }
+    }
+  ],
+  "contact": [
+    {
+      "relationship": [
+        {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v2-0131",
+              "code": "N"
+            }
+          ]
+        }
+      ],
+      "name": {
+        "family": "du Marché",
+        "_family": {
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/humanname-own-prefix",
+              "valueString": "VV"
+            }
+          ]
+        },
+        "given": [
+          "Bénédicte"
+        ]
+      },
+      "telecom": [
+        {
+          "system": "phone",
+          "value": "+33 (237) 998327"
+        }
+      ],
+      "address": {
+        "use": "home",
+        "type": "both",
+        "line": [
+          "534 Erewhon St"
+        ],
+        "city": "PleasantVille",
+        "district": "Rainbow",
+        "state": "Vic",
+        "postalCode": "3999",
+        "period": {
+          "start": "1974-12-25"
+        }
+      },
+      "gender": "female",
+      "period": {
+        "start": "2012"
+      }
+    }
+  ],
+  "managingOrganization": {
+    "reference": "http://hapifhirorganization:8080/fhir/Organization/1"
+  }
+}
+```

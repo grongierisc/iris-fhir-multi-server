@@ -40,7 +40,7 @@ XData ProductionDefinition
     <Setting Target="Host" Name="TargetConfigName">Python.bp.FhirRouter</Setting>
     <Setting Target="Host" Name="TraceOperations">*FULL*</Setting>
     <Setting Target="Host" Name="FHIRMetadataSet">HL7v40 / FHIR R4 Core Specification</Setting>
-    <Setting Target="Host" Name="OutputToQuickStream">1</Setting>
+    <Setting Target="Host" Name="OutputToQuickStream">0</Setting>
   </Item>
   <Item Name="HL7_SDA" Category="" ClassName="Proxy.BP.HL7TransformProcess" PoolSize="1" Enabled="true" Foreground="false" Comment="" LogTraceEvents="false" Schedule="">
     <Setting Target="Host" Name="TargetConfigName">SDA_FHIR</Setting>
