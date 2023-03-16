@@ -10,7 +10,7 @@
       "username": "SuperUser",
       "password": "SYS",
       "docker-compose": {
-        "service": "iris",
+        "service": "irisfhir",
         "internalPort": 52773
       },
       "links": {

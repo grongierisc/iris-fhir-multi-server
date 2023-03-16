@@ -28,6 +28,8 @@ RUN apt-get update && apt-get install -y \
 
 USER ${ISC_PACKAGE_MGRUSER}
 
+RUN pip3 install iknowpy
+
 # Python stuff
 ENV IRISUSERNAME "SuperUser"
 ENV IRISPASSWORD "SYS"
