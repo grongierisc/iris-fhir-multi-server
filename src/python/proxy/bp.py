@@ -8,6 +8,20 @@ import json
 
 class FhirRouter(BusinessProcess):
 
+    def __init__(self):
+        # check is self as un attribut name fhirclaim
+        if not hasattr(self, "fhirclaim"):
+            self.fhirclaim = "http://hapifhirclaim:8080/fhir/"
+        # check is self as un attribut name fhirorganization
+        if not hasattr(self, "fhirorganization"):
+            self.fhirorganization = "http://hapifhirorganization:8080/fhir/"
+        # check is self as un attribut name fhirdefault
+        if not hasattr(self, "fhirdefault"):
+            self.fhirdefault = "http://irisfhir:52773/fhir/r4/"
+        # check is self as un attribut name fhireai
+        if not hasattr(self, "fhireai"):
+            self.fhireai = self.fhireai
+
     def on_iri_fhir_message(self,request : 'iris.HS.FHIRServer.Interop.Request'):
         """
         > When a FHIR request is received, create a FHIR resource from the request,
@@ -45,7 +59,51 @@ class FhirRouter(BusinessProcess):
         response = self.send_request_sync(target,request)
 
         # Return the response
+        return self._process_response(response)
+    
+    def _process_response(self, response : 'iris.HS.FHIRServer.Interop.Response') -> 'iris.HS.FHIRServer.Interop.Response':
+        # from the json payload, get the id of the resource
+        quick_stream_id = response.QuickStreamId
+        quick_stream = iris.cls('HS.SDA3.QuickStream')._OpenId(quick_stream_id)
+        json_payload = ''
+        while quick_stream.AtEnd == 0:
+            json_payload += quick_stream.Read()
+
+        # parse the json payload as an FHIR bundle
+        try:
+            my_bundle = bundle.Bundle(**json.loads(json_payload))
+        except Exception as e:
+            return response
+        # for each link in the bundle
+        # check if my_bundle.link is not None
+        if my_bundle.link:
+            for link in my_bundle.link:
+                # change the link to the FHIR server url
+                link.url = link.url.replace(self.fhirclaim, self.fhireai)
+                link.url = link.url.replace(self.fhirorganization, self.fhireai)
+                link.url = link.url.replace(self.fhirdefault, self.fhireai)
+        if my_bundle.entry:
+            for entry in my_bundle.entry:
+                # change the fullUrl to the FHIR server url
+                entry.fullUrl = entry.fullUrl.replace(self.fhirclaim, self.fhireai)
+                entry.fullUrl = entry.fullUrl.replace(self.fhirorganization, self.fhireai)
+                entry.fullUrl = entry.fullUrl.replace(self.fhirdefault, self.fhireai)
+
+        # clear the payload
+        quick_stream = iris.cls('HS.SDA3.QuickStream')._New()
+
+        # write the json string to the payload
+        json_string = my_bundle.json()
+        n = 3000
+        chunks = [json_string[i:i+n] for i in range(0, len(json_string), n)]
+        for chunk in chunks:
+            quick_stream.Write(chunk)
+
+        response.QuickStreamId = quick_stream._Id()
+
+        # return the response
         return response
+        
 
     def from_hl7v2(self, msg:'iris.HS.Message.FHIR.Request'):
         """
