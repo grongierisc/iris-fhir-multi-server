@@ -269,14 +269,6 @@ POST http://localhost:32283/fhir/r4/Patient
   ],
   "gender": "male",
   "birthDate": "1974-12-25",
-  "_birthDate": {
-    "extension": [
-      {
-        "url": "http://hl7.org/fhir/StructureDefinition/patient-birthTime",
-        "valueDateTime": "1974-12-25T14:35:45-05:00"
-      }
-    ]
-  },
   "deceasedBoolean": false,
   "address": [
     {
@@ -309,14 +301,6 @@ POST http://localhost:32283/fhir/r4/Patient
       ],
       "name": {
         "family": "du Marché",
-        "_family": {
-          "extension": [
-            {
-              "url": "http://hl7.org/fhir/StructureDefinition/humanname-own-prefix",
-              "valueString": "VV"
-            }
-          ]
-        },
         "given": [
           "Bénédicte"
         ]
