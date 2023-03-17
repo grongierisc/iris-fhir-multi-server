@@ -20,7 +20,7 @@ class FhirRouter(BusinessProcess):
             self.fhirdefault = "http://irisfhir:52773/fhir/r4/"
         # check is self as un attribut name fhireai
         if not hasattr(self, "fhireai"):
-            self.fhireai = self.fhireai
+            self.fhireai = "http://localhost:32283/fhir/r4/"
 
     def on_iri_fhir_message(self,request : 'iris.HS.FHIRServer.Interop.Request'):
         """

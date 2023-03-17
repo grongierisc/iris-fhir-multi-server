@@ -36,4 +36,10 @@
     zw ##class(Ens.Util.Statistics).EnableSAMForNamespace()
     zw ##class(Ens.Util.Statistics).EnableSAMIncludeHostLabel()
 
+    zn "%SYS"
+
+    do ##class(Security.Applications).Get("/fhir/r4",.prop)
+    set prop("DispatchClass") = "Proxy.FHIRServer.HC.FHIRInteropAdapter"
+    do ##class(Security.Applications).Modify("/fhir/r4",.prop)
+
     halt
