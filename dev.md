@@ -37,6 +37,11 @@ kill ^%ISCLOG
 kill ^ISCLOG
 
 set ^%ISCLOG=3
-
-
+```
+# remove data of an FHIR repository
+```
+set options("deleteDataOnly") = 1
+set rm = ##class(HS.FHIRServer.API.RepoManager).getInstance(1)
+d rm.DeleteService(1,.options)
+```
 
