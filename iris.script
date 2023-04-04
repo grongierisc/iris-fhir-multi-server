@@ -26,12 +26,12 @@
     set status = ##class(HS.FHIRServer.Installer).InteropAdapterConfig(appKey)
 
     do ##class(Ens.Director).StopProduction()
-    do $system.OBJ.ImportDir("/opt/irisapp/src","*.cls","cdk",.errors,1)
+    do $system.OBJ.ImportDir("/irisdev/app/src","*.cls","cdk",.errors,1)
 
     zw $classmethod("Ens.Director", "SetAutoStart", "FHIRSERVERPKG.FoundationProduction", 0)
 
     // load registry
-    do $system.OBJ.Load("/opt/irisapp/misc/export.gof")
+    do $system.OBJ.Load("/irisdev/app/misc/export.gof")
 
     zw ##class(Ens.Util.Statistics).EnableSAMForNamespace()
     zw ##class(Ens.Util.Statistics).EnableSAMIncludeHostLabel()
