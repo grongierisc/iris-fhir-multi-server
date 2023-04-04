@@ -36,6 +36,8 @@ class FhirRouter(BusinessProcess):
         response = iris.cls('HS.FHIRServer.Interop.Response')._New()
         response.Response.Status = "200"
         target = "FHIRDefault"
+        if request.Request.Prefer:
+            request.Request.AdditionalInfo.SetAt("return=representation","HEADER:PREFER")
 
         # Get the path
         path = request.Request.RequestPath
@@ -78,16 +80,18 @@ class FhirRouter(BusinessProcess):
         # check if my_bundle.link is not None
         if my_bundle.link:
             for link in my_bundle.link:
-                # change the link to the FHIR server url
-                link.url = link.url.replace(self.fhirclaim, self.fhireai)
-                link.url = link.url.replace(self.fhirorganization, self.fhireai)
-                link.url = link.url.replace(self.fhirdefault, self.fhireai)
+                if link.url:
+                    # change the link to the FHIR server url
+                    link.url = link.url.replace(self.fhirclaim, self.fhireai)
+                    link.url = link.url.replace(self.fhirorganization, self.fhireai)
+                    link.url = link.url.replace(self.fhirdefault, self.fhireai)
         if my_bundle.entry:
             for entry in my_bundle.entry:
                 # change the fullUrl to the FHIR server url
-                entry.fullUrl = entry.fullUrl.replace(self.fhirclaim, self.fhireai)
-                entry.fullUrl = entry.fullUrl.replace(self.fhirorganization, self.fhireai)
-                entry.fullUrl = entry.fullUrl.replace(self.fhirdefault, self.fhireai)
+                if entry.fullUrl:
+                    entry.fullUrl = entry.fullUrl.replace(self.fhirclaim, self.fhireai)
+                    entry.fullUrl = entry.fullUrl.replace(self.fhirorganization, self.fhireai)
+                    entry.fullUrl = entry.fullUrl.replace(self.fhirdefault, self.fhireai)
 
         # clear the payload
         quick_stream = iris.cls('HS.SDA3.QuickStream')._New()
