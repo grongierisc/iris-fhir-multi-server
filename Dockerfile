@@ -3,8 +3,8 @@ FROM $IMAGE as builder
 
 USER root
 
-WORKDIR /opt/irisapp
-RUN chown ${ISC_PACKAGE_MGRUSER}:${ISC_PACKAGE_IRISGROUP} /opt/irisapp
+WORKDIR /irisdev/app
+RUN chown ${ISC_PACKAGE_MGRUSER}:${ISC_PACKAGE_IRISGROUP} /irisdev/app
 USER ${ISC_PACKAGE_MGRUSER}
 
 COPY . .
