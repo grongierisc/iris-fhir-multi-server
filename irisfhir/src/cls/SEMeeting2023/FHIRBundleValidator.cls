@@ -1,7 +1,9 @@
 Class SEMeeting2023.FHIRBundleValidator Extends HS.FHIRServer.Util.BundleValidator
 {
 
-ClassMethod ValidateBundle(pResourceObject As %DynamicObject, pFHIRVersion As %String)
+ClassMethod ValidateBundle(
+	pResourceObject As %DynamicObject,
+	pFHIRVersion As %String)
 {
 	do ##super(pResourceObject, pFHIRVersion)
 

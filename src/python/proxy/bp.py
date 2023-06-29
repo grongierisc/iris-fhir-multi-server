@@ -8,7 +8,7 @@ import json
 
 class FhirRouter(BusinessProcess):
 
-    def __init__(self):
+    def on_init(self):
         # check is self as un attribut name fhirclaim
         if not hasattr(self, "fhirclaim"):
             self.fhirclaim = "http://hapifhirclaim:8080/fhir/"
