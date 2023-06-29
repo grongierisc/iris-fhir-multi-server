@@ -16,13 +16,16 @@
 
 ```http
 GET http://localhost:32283/fhir/r4/Patient?name=elbert
+Content-Type: application/json+fhir
+Accept: application/json+fhir
 ```
 
 ### Post an Organisation from EAI
 
 ```http
 POST http://localhost:32283/fhir/r4/Organization
-Content-Type: application/json
+Content-Type: application/json+fhir
+Accept: application/json+fhir
 
 {
   "resourceType": "Organization",
@@ -185,6 +188,9 @@ POST http://localhost:32283/fhir/r4/Claim
 
 ```http
 POST http://localhost:32283/fhir/r4/Patient
+Content-Type: application/json+fhir
+Accept: application/json+fhir
+Prefer: return=representation
 
 {
   "resourceType": "Patient",
@@ -333,6 +339,47 @@ POST http://localhost:32283/fhir/r4/Patient
   ],
   "managingOrganization": {
     "reference": "http://hapifhirorganization:8080/fhir/Organization/1"
+  }
+}
+```
+
+### validate patient
+
+```http
+POST http://localhost:32283/fhir/r4/Patient/
+Content-Type: application/json+fhir
+Accept: application/json+fhir
+
+{
+  "resourceType": "Patient",
+  "id": "PatientExample",
+  "meta": {
+    "profile": [
+      "http://intersystems.com/fhir/chu/toulouse/StructureDefinition/MyPatient"
+    ]
+  },
+  "extension": [
+    {
+      "url": "http://intersystems.com/fhir/chu/toulouse/StructureDefinition/birthsex-extension",
+      "valueCode": "F"
+    }
+  ],
+  "name": [
+    {
+      "given": [
+        "Janette"
+      ],
+      "family": "Smith"
+    }
+  ],
+  "maritalStatus": {
+    "coding": [
+      {
+        "code": "M",
+        "system": "http://terminology.hl7.org/CodeSystem/v3-MaritalStatus",
+        "display": "Married"
+      }
+    ]
   }
 }
 ```
